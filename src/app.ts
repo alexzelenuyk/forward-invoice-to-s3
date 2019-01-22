@@ -1,7 +1,31 @@
-export const handler = async (event: any = {}): Promise<any> => {
-    
-    console.log('receipt', event.Records[0].ses);
+import AWS from "aws-sdk"
+import { simpleParser } from "mailparser"
 
-    const response = JSON.stringify(event, null, 2);
-    return response;
+import { SESEvent } from "common/event";
+import { Callback, Context } from "aws-lambda";
+import { environment } from "common/environment";
+import { isPdfFile, storePdf } from "parse/attachments";
+
+export const handler = async (event: SESEvent, context: Context, callback: Callback): Promise<any> => {
+    const messageId = event.Records[0].ses.mail.messageId
+
+    try {
+        const mailBlob = await new AWS.S3().getObject({
+            Bucket: environment().tempMailBucket,
+            Key: messageId
+        })
+    
+        const mail = await simpleParser(mailBlob.createReadStream())
+
+        if (mail.attachments) {
+            await mail.attachments
+                .filter(isPdfFile)
+                .forEach(storePdf)
+        }
+    } catch (error) {
+        const disposition = 'STOP_RULE_SET'
+        callback(error, { disposition });
+    }
+
+    callback(null, null);
 }

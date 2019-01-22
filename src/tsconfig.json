@@ -1,17 +1,18 @@
 {
-  "compilerOptions": {
-    "target": "es2017",
-    "module": "commonjs",
+	"compilerOptions": {
+		"target": "es2016",
+		"module": "commonjs",
+		"declaration": false,
+		"removeComments": true,
+		"pretty": true,
+		"allowUnreachableCode": false,
+		"allowUnusedLabels": false,
+		"noImplicitAny": false,
+		"noImplicitReturns": true,
+		"noImplicitUseStrict": false,
+		"noFallthroughCasesInSwitch": true,
+		"allowSyntheticDefaultImports": true,
     "outDir": "./.build",
-    "strict": true,
-    "baseUrl": "./",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "types": [
-      "node"
-    ],
-    "esModuleInterop": true,
-    "inlineSourceMap": true
-  }
+    "baseUrl": "./"
+	}
 }

@@ -24,3 +24,6 @@ deploy: package
 	sam deploy --template-file $(SAM_DIST_TEMPLATE) \
 	--stack-name $(STACK_NAME) \
 	--capabilities CAPABILITY_IAM
+
+local-invoke:
+	sam local invoke -e test/sample/test_email.json -n test/sample/env.json

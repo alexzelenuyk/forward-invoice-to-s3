@@ -1,17 +1,24 @@
 {
   "name": "forward-invoice-to-s3",
   "version": "1.0.0",
-  "description": "Store important invoices in durable s3",
+  "description": "Store important invoices in durable S3",
   "main": "app.ts",
   "repository": "https://github.com/alexzelenuyk/forward-invoice-to-s3",
   "author": "Oleksii Zeleniuk",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "aws-sdk": "^2.392.0",
+    "mailparser": "^2.4.3"
+  },
   "scripts": {
     "test": "jest",
-    "build": "$(yarn bin)/tsc"
+    "build": "tsc -p tsconfig.json",
+    "postbuild": "yarn install --modules-folder ./.build/node_modules --prod"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.17",
+    "@types/aws-sdk": "^2.7.0",
+    "@types/mailparser": "^2.0.2",
     "@types/node": "^10.12.18",
     "jest": "^23.6.0",
     "tsc": "^1.20150623.0",

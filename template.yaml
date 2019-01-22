@@ -16,6 +16,10 @@ Resources:
             CodeUri: src/.build
             Handler: app.handler
             Runtime: nodejs8.10
+            Environment:
+                Variables:
+                    TEMP_MAIL_BUCKET: !Select [0, !Split [".", !GetAtt S3TempBucketForEmails.DomainName]]
+                    DESTINATION_BUCKET: testdestinationinvoicestest
             Policies:
                 - Version: '2012-10-17'
                   Statement:
