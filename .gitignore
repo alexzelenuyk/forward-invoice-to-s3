@@ -1,0 +1,3 @@
+.aws-sam
+src/build
+src/node_modules

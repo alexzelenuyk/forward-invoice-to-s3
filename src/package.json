@@ -1,0 +1,20 @@
+{
+  "name": "forward-invoice-to-s3",
+  "version": "1.0.0",
+  "description": "Store important invoices in durable s3",
+  "main": "app.ts",
+  "repository": "https://github.com/alexzelenuyk/forward-invoice-to-s3",
+  "author": "Oleksii Zeleniuk",
+  "license": "MIT",
+  "dependencies": {},
+  "scripts": {
+    "test": "jest",
+    "build": "$(yarn bin)/tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.18",
+    "jest": "^23.6.0",
+    "tsc": "^1.20150623.0",
+    "typescript": "^3.2.4"
+  }
+}
