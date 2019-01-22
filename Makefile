@@ -1,4 +1,6 @@
+AWS_REGION ?= AWS_REGION
 BUCKET_NAME ?= BUCKET_NAME
+
 SAM_DIST_DIR = .aws-sam
 SAM_DIST_TEMPLATE = $(SAM_DIST_DIR)/sam-template.yaml
 
@@ -6,7 +8,7 @@ bucket:
 	aws s3api create-bucket \
 	--bucket $(BUCKET_NAME) \
 	--acl private \
-	--create-bucket-configuration LocationConstraint=eu-west-1
+	--create-bucket-configuration LocationConstraint=$(AWS_REGION)
 
 ensure-sam-dir:
 	mkdir -p $(SAM_DIST_DIR)
