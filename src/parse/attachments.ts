@@ -1,4 +1,4 @@
-import AWS from "aws-sdk";
+import * as AWS from "aws-sdk"
 import { environment } from "common/environment";
 import { Attachment } from "mailparser";
 import { getS3KeyPrefix } from "persist/s3KeyPrefix";

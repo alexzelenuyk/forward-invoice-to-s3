@@ -1,4 +1,4 @@
-import AWS from "aws-sdk"
+import * as AWS from "aws-sdk"
 import { simpleParser } from "mailparser"
 
 import { SESEvent } from "common/event";
@@ -14,13 +14,11 @@ export const handler = async (event: SESEvent, context: Context, callback: Callb
             Bucket: environment().tempMailBucket,
             Key: messageId
         })
-    
+
         const mail = await simpleParser(mailBlob.createReadStream())
 
         if (mail.attachments) {
-            await mail.attachments
-                .filter(isPdfFile)
-                .forEach(storePdf)
+            await Promise.all(mail.attachments.filter(isPdfFile).map(storePdf))
         }
     } catch (error) {
         const disposition = 'STOP_RULE_SET'
