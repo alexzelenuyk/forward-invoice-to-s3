@@ -1,5 +1,6 @@
-AWS_REGION ?= AWS_REGION
-BUCKET_NAME ?= BUCKET_NAME
+AWS_REGION ?= eu-west-1
+BUCKET_NAME ?= temporary_bucket
+STACK_NAME ?= from-ses-to-ses
 
 SAM_DIST_DIR = .aws-sam
 SAM_DIST_TEMPLATE = $(SAM_DIST_DIR)/sam-template.yaml
@@ -21,5 +22,5 @@ package: ensure-sam-dir
 
 deploy: package
 	sam deploy --template-file $(SAM_DIST_TEMPLATE) \
-	--stack-name sam-tryout \
+	--stack-name $(STACK_NAME) \
 	--capabilities CAPABILITY_IAM

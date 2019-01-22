@@ -1,44 +1,106 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-    sam-app
+    Stack intercepts emails, invoke lambda to extract invoices and store them in s3 with categorisation
 
-    Sample SAM Template for sam-app
-    
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
     Function:
         Timeout: 3
 
-
 Resources:
 
-    HelloWorldFunction:
+    LambdaFunction:
         Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
         Properties:
             CodeUri: src/.build
             Handler: app.handler
             Runtime: nodejs8.10
-            # Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
-            #     Variables:
-            #         PARAM1: VALUE
-            # Events:
-            #     HelloWorld:
-            #         Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-            #         Properties:
-            #             Path: /hello
-            #             Method: get
+            Policies:
+                - Version: '2012-10-17'
+                  Statement:
+                    - Effect: Allow
+                      Action: s3:*
+                      Resource: !GetAtt S3TempBucketForEmails.Arn
+                    - Effect: Allow
+                      Action: ses:SendBounce
+                      Resource: "*"  
+                    - Effect: Allow
+                      Action: logs:*
+                      Resource: "arn:aws:logs:*:*:*"  
+                        
+        DependsOn: S3TempBucketForEmails
 
-# Outputs:
+    S3TempBucketForEmails:
+        Type : AWS::S3::Bucket
+        DeletionPolicy: Delete
+        Properties:
+            AccessControl: BucketOwnerFullControl
+            LifecycleConfiguration:
+                Rules:
+                - Id: "DeleteFile"
+                  ExpirationInDays: 1
+                  Status: Enabled
+    
+    S3TempBucketForEmailsPolicy:
+        Type: AWS::S3::BucketPolicy
+        Properties: 
+            Bucket: !Select [0, !Split [".", !GetAtt S3TempBucketForEmails.DomainName]]
+            PolicyDocument: 
+                Statement:  
+                - Sid: "AllowSESPuts"
+                  Principal:
+                    Service: "ses.amazonaws.com"
+                  Action: "s3:PutObject"  
+                  Effect: "Allow"  
+                  Resource: !Join ["", [!GetAtt S3TempBucketForEmails.Arn, "/*"]]
+        DependsOn: S3TempBucketForEmails
 
-#     HelloWorldApi:
-#       Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-#       Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+    LambdaSesPermissions:
+        Type : AWS::Lambda::Permission
+        Properties:
+            Action: lambda:InvokeFunction
+            Principal: ses.amazonaws.com
+            FunctionName: !GetAtt LambdaFunction.Arn
+        DependsOn: LambdaFunction
 
-#     HelloWorldFunction:
-#       Description: "Hello World Lambda Function ARN"
-#       Value: !GetAtt HelloWorldFunction.Arn
+    RuleSet:
+        Type: AWS::SES::ReceiptRuleSet
+        Properties:
+            RuleSetName: InvoicesToS3
 
-#     HelloWorldFunctionIamRole:
-#       Description: "Implicit IAM Role created for Hello World function"
-#       Value: !GetAtt HelloWorldFunctionRole.Arn
+    SESRulesToStoreMail:
+        Type: AWS::SES::ReceiptRule
+        Properties:
+            RuleSetName: !Ref RuleSet
+            Rule:
+              Enabled: True
+              Actions:
+                - S3Action:
+                    BucketName: !Select [0, !Split [".", !GetAtt S3TempBucketForEmails.DomainName]]
+        DependsOn: 
+          - LambdaFunction
+          - S3TempBucketForEmails
+          - LambdaSesPermissions
+          - RuleSet
+
+    SESRulesToInvokeLambda:
+        Type: AWS::SES::ReceiptRule
+        Properties:
+            RuleSetName: !Ref RuleSet
+            After: !Ref SESRulesToStoreMail
+            Rule:
+              Enabled: True
+              Actions: 
+                - LambdaAction:
+                    FunctionArn: !GetAtt LambdaFunction.Arn
+        DependsOn: 
+          - LambdaFunction
+          - S3TempBucketForEmails
+          - LambdaSesPermissions
+          - RuleSet
+
+Outputs:
+    LambdaFunction:
+      Description: "Lambda handler ARN"
+      Value: !GetAtt LambdaFunction.Arn
