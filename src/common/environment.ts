@@ -1,6 +1,7 @@
 interface Environment {
     tempMailBucket: string;
     destinationBucket: string;
+    awsRegion: string;
 }
 
 function ensureEnvironmentVariable(name: string): string {
@@ -16,5 +17,6 @@ export function environment(): Environment {
     return {
         tempMailBucket: ensureEnvironmentVariable('TEMP_MAIL_BUCKET'),
         destinationBucket: ensureEnvironmentVariable('DESTINATION_BUCKET'),
+        awsRegion: ensureEnvironmentVariable('AWS_REGION'),
     }
 }

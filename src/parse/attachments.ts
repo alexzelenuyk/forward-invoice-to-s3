@@ -6,7 +6,7 @@ import { getS3KeyPrefix } from "persist/s3KeyPrefix";
 export const PDF_SUFFIX = '.pdf'
 
 export async function storePdf(pdf: Attachment): Promise<void> {
-    await new AWS.S3().putObject({
+    await new AWS.S3({apiVersion: '2006-03-01', region: environment().awsRegion}).putObject({
         Bucket: environment().destinationBucket,
         Key: getS3KeyPrefix().concat('/', pdf.filename!)
     });
