@@ -1,16 +1,19 @@
-import * as AWS from "aws-sdk"
-import { environment } from "common/environment";
+import * as AWS from "aws-sdk";
+import { env } from "common/env";
 import { Attachment } from "mailparser";
 import { getS3KeyPrefix } from "persist/s3KeyPrefix";
 
 export const PDF_SUFFIX = '.pdf'
 
 export async function storePdf(pdf: Attachment): Promise<void> {
-    await new AWS.S3({apiVersion: '2006-03-01', region: environment().awsRegion}).putObject({
-        Bucket: environment().destinationBucket,
+    const object = {
+        Bucket: env().destinationBucket,
         Key: getS3KeyPrefix().concat('/', pdf.filename!)
-    });
+    };
+
+    await new AWS.S3().putObject(object).promise();
 }
 export function isPdfFile(pdf: Attachment): boolean {
+    console.log('invoke isPdfFile')
     return pdf.filename!.endsWith(PDF_SUFFIX);
 }

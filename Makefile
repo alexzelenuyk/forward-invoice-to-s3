@@ -1,6 +1,7 @@
 AWS_REGION ?= eu-west-1
 BUCKET_NAME ?= temporary_bucket
-STACK_NAME ?= from-ses-to-ses
+STACK_NAME ?= from-ses-to-s3
+STORAGE_BUCKET_NAME ?= invoice-storage
 
 SAM_DIST_DIR = .aws-sam
 SAM_DIST_TEMPLATE = $(SAM_DIST_DIR)/sam-template.yaml
@@ -21,8 +22,10 @@ package: ensure-sam-dir
 	sam package --s3-bucket sam-deploy-packages --output-template-file $(SAM_DIST_TEMPLATE)
 
 deploy: package
-	sam deploy --template-file $(SAM_DIST_TEMPLATE) \
+	sam deploy \
+	--template-file $(SAM_DIST_TEMPLATE) \
 	--stack-name $(STACK_NAME) \
+	--parameter-overrides StorageBucketPrefix=${STORAGE_BUCKET_NAME} \
 	--capabilities CAPABILITY_IAM
 
 local-invoke:

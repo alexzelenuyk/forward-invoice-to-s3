@@ -3,15 +3,19 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
     Stack intercepts emails, invoke lambda to extract invoices and store them in s3 with categorisation
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
     Function:
-        Timeout: 3
+        Timeout: 30
+
+Parameters:
+    StorageBucketPrefix:
+        Type: String
+        Description: Prefix for S3 bucket where all documents will be stored 
 
 Resources:
 
     LambdaFunction:
-        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Type: AWS::Serverless::Function 
         Properties:
             CodeUri: src/.build
             Handler: lambda.handler
@@ -24,8 +28,12 @@ Resources:
                 - Version: '2012-10-17'
                   Statement:
                     - Effect: Allow
-                      Action: s3:*
-                      Resource: !GetAtt S3TempBucketForEmails.Arn
+                      Action: 
+                        - "s3:GetObject"
+                        - "s3:PutObject"
+                      Resource:
+                        - !Join ["", [!GetAtt S3TempBucketForEmails.Arn, "/*"]]
+                        - !Join ["", [!GetAtt S3StorageBucket.Arn, "/*"]]
                     - Effect: Allow
                       Action: ses:SendBounce
                       Resource: "*"  
@@ -33,7 +41,9 @@ Resources:
                       Action: logs:*
                       Resource: "arn:aws:logs:*:*:*"  
                         
-        DependsOn: S3TempBucketForEmails
+        DependsOn:
+            - S3TempBucketForEmails
+            - S3StorageBucket
 
     S3TempBucketForEmails:
         Type : AWS::S3::Bucket
@@ -46,6 +56,11 @@ Resources:
                   ExpirationInDays: 1
                   Status: Enabled
     
+    S3StorageBucket:
+        Type : AWS::S3::Bucket
+        Properties:
+            BucketName: !Join ["", [!Ref StorageBucketPrefix, "-", "test"]]
+
     S3TempBucketForEmailsPolicy:
         Type: AWS::S3::BucketPolicy
         Properties: 
@@ -58,7 +73,9 @@ Resources:
                   Action: "s3:PutObject"  
                   Effect: "Allow"  
                   Resource: !Join ["", [!GetAtt S3TempBucketForEmails.Arn, "/*"]]
-        DependsOn: S3TempBucketForEmails
+        DependsOn: 
+            - S3TempBucketForEmails
+            - LambdaSesPermissions
 
     LambdaSesPermissions:
         Type : AWS::Lambda::Permission
@@ -108,3 +125,6 @@ Outputs:
     LambdaFunction:
       Description: "Lambda handler ARN"
       Value: !GetAtt LambdaFunction.Arn
+    StorageBucket:
+      Description: "Storage bucket name"
+      Value: !GetAtt S3StorageBucket.DomainName
