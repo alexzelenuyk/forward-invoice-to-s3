@@ -13,7 +13,9 @@
   "scripts": {
     "test": "jest",
     "build": "tsc -p tsconfig.json",
-    "postbuild": "yarn install --modules-folder ./.build/node_modules --prod"
+    "postbuild": "yarn install --modules-folder ./.build/node_modules --prod",
+    "lint": "tslint --project ./tsconfig.json --config ./tslint.json",
+    "lint:fix": "prettier --write ./**/*.ts"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
@@ -21,7 +23,11 @@
     "@types/mailparser": "^2.0.2",
     "@types/node": "^10.12.18",
     "jest": "^23.6.0",
+    "prettier": "^1.16.1",
+    "prettier-tslint": "^0.4.2",
     "tsc": "^1.20150623.0",
+    "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.17.0",
     "typescript": "^3.2.4"
   }
 }

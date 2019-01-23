@@ -1,5 +1,5 @@
 export function getS3KeyPrefix(): string {
-    const date = new Date()
+  const date = new Date();
 
-    return `${date.getFullYear()}/${date.getMonth()+1}`
+  return `${date.getFullYear()}/${date.getMonth() + 1}`;
 }
