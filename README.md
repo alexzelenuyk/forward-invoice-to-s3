@@ -1,5 +1,11 @@
 SAM with Cloudformation template to intercept emails using SES, extract invoices using Lambda and store them categorised to S3.
 
+## Requirements
+* [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+* [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
+* [YARN](https://yarnpkg.com/lang/en/docs/install/#mac-stable)
+* [jq](https://stedolan.github.io/jq/)
+
 ## Setup
 
 ### Setup SAM S3 bucket
