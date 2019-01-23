@@ -30,3 +30,8 @@ deploy: package
 
 local-invoke:
 	sam local invoke -e test/sample/test_email.json -n test/sample/env.json
+
+lambda-logs:
+	sam logs -n \
+	`aws cloudformation describe-stacks --stack-name ${STACK_NAME} |\
+	jq --raw-output '.Stacks[0].Outputs[] | select(.OutputKey | contains("LambdaFunction")) | .OutputValue | split(":")[6]'`
