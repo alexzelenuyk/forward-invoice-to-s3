@@ -20,14 +20,32 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
     "@types/aws-sdk": "^2.7.0",
+    "@types/jest": "^23.3.13",
     "@types/mailparser": "^2.0.2",
     "@types/node": "^10.12.18",
     "jest": "^23.6.0",
     "prettier": "^1.16.1",
     "prettier-tslint": "^0.4.2",
+    "ts-jest": "^23.10.5",
     "tsc": "^1.20150623.0",
     "tslint": "^5.12.1",
     "tslint-config-prettier": "^1.17.0",
     "typescript": "^3.2.4"
+  },
+  "jest": {
+    "rootDir": ".",
+    "transform": {
+      ".(ts)": "ts-jest"
+    },
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "testRegex": ".*.test.(ts)$",
+    "moduleDirectories": [
+      "node_modules",
+      "."
+    ]
   }
 }
