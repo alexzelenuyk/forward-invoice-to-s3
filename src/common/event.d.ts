@@ -28,4 +28,4 @@ export interface SESEvent {
     Records: SESEventRecord[];
 }
 
-export type SESHandler = Handler<SESEvent, void>; 
+export type SESHandler = Handler<SESEvent, void>;

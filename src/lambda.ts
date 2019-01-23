@@ -16,14 +16,14 @@ export const handler = async (event: SESEvent, context: Context, callback: Callb
         }
         const mailBlob = await new AWS.S3().getObject(object).promise()
         const mail = await simpleParser(mailBlob.Body.toString('utf-8'))
-        
+
         if (mail.attachments) {
             await Promise.all(mail.attachments.filter(isPdfFile).map(storePdf))
         }
     } catch (error) {
         const disposition = 'STOP_RULE_SET'
-        callback(error, { disposition });
+        callback(error, { disposition })
     }
 
-    callback(null, null);
+    callback(null, null)
 }

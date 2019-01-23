@@ -8,14 +8,14 @@ Globals:
         Timeout: 30
 
 Parameters:
-    StorageBucketPrefix:
+    StorageBucket:
         Type: String
-        Description: Prefix for S3 bucket where all documents will be stored 
+        Description: Prefix for S3 bucket where all documents will be stored
 
 Resources:
 
     LambdaFunction:
-        Type: AWS::Serverless::Function 
+        Type: AWS::Serverless::Function
         Properties:
             CodeUri: src/.build
             Handler: lambda.handler
@@ -23,12 +23,12 @@ Resources:
             Environment:
                 Variables:
                     TEMP_MAIL_BUCKET: !Select [0, !Split [".", !GetAtt S3TempBucketForEmails.DomainName]]
-                    DESTINATION_BUCKET: testdestinationinvoicestest
+                    DESTINATION_BUCKET: !Ref StorageBucket
             Policies:
                 - Version: '2012-10-17'
                   Statement:
                     - Effect: Allow
-                      Action: 
+                      Action:
                         - "s3:GetObject"
                         - "s3:PutObject"
                       Resource:
@@ -36,11 +36,11 @@ Resources:
                         - !Join ["", [!GetAtt S3StorageBucket.Arn, "/*"]]
                     - Effect: Allow
                       Action: ses:SendBounce
-                      Resource: "*"  
+                      Resource: "*"
                     - Effect: Allow
                       Action: logs:*
-                      Resource: "arn:aws:logs:*:*:*"  
-                        
+                      Resource: "arn:aws:logs:*:*:*"
+
         DependsOn:
             - S3TempBucketForEmails
             - S3StorageBucket
@@ -55,25 +55,25 @@ Resources:
                 - Id: "DeleteFile"
                   ExpirationInDays: 1
                   Status: Enabled
-    
+
     S3StorageBucket:
         Type : AWS::S3::Bucket
         Properties:
-            BucketName: !Join ["", [!Ref StorageBucketPrefix, "-", "test"]]
+            BucketName: !Ref StorageBucket
 
     S3TempBucketForEmailsPolicy:
         Type: AWS::S3::BucketPolicy
-        Properties: 
+        Properties:
             Bucket: !Select [0, !Split [".", !GetAtt S3TempBucketForEmails.DomainName]]
-            PolicyDocument: 
-                Statement:  
+            PolicyDocument:
+                Statement:
                 - Sid: "AllowSESPuts"
                   Principal:
                     Service: "ses.amazonaws.com"
-                  Action: "s3:PutObject"  
-                  Effect: "Allow"  
+                  Action: "s3:PutObject"
+                  Effect: "Allow"
                   Resource: !Join ["", [!GetAtt S3TempBucketForEmails.Arn, "/*"]]
-        DependsOn: 
+        DependsOn:
             - S3TempBucketForEmails
             - LambdaSesPermissions
 
@@ -99,7 +99,7 @@ Resources:
               Actions:
                 - S3Action:
                     BucketName: !Select [0, !Split [".", !GetAtt S3TempBucketForEmails.DomainName]]
-        DependsOn: 
+        DependsOn:
           - LambdaFunction
           - S3TempBucketForEmails
           - LambdaSesPermissions
@@ -112,10 +112,10 @@ Resources:
             After: !Ref SESRulesToStoreMail
             Rule:
               Enabled: True
-              Actions: 
+              Actions:
                 - LambdaAction:
                     FunctionArn: !GetAtt LambdaFunction.Arn
-        DependsOn: 
+        DependsOn:
           - LambdaFunction
           - S3TempBucketForEmails
           - LambdaSesPermissions
@@ -123,8 +123,11 @@ Resources:
 
 Outputs:
     LambdaFunction:
-      Description: "Lambda handler ARN"
-      Value: !GetAtt LambdaFunction.Arn
+        Description: "Lambda handler ARN"
+        Value: !GetAtt LambdaFunction.Arn
     StorageBucket:
-      Description: "Storage bucket name"
-      Value: !GetAtt S3StorageBucket.DomainName
+        Description: "Storage bucket name"
+        Value: !GetAtt S3StorageBucket.DomainName
+    RulesetsName:
+        Description: "Name of rulesets"
+        Value: "InvoicesToS3"

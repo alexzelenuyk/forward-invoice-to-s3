@@ -9,11 +9,10 @@ export async function storePdf(pdf: Attachment): Promise<void> {
     const object = {
         Bucket: env().destinationBucket,
         Key: getS3KeyPrefix().concat('/', pdf.filename!)
-    };
+    }
 
     await new AWS.S3().putObject(object).promise();
 }
 export function isPdfFile(pdf: Attachment): boolean {
-    console.log('invoke isPdfFile')
-    return pdf.filename!.endsWith(PDF_SUFFIX);
+    return pdf.filename!.endsWith(PDF_SUFFIX)
 }

@@ -1,3 +1,5 @@
 export function getS3KeyPrefix(): string {
-    return '2019/Q1'
+    const date = new Date()
+
+    return `${date.getFullYear()}/${date.getMonth()+1}`
 }
