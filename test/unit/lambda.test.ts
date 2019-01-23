@@ -1,16 +1,13 @@
 import { Callback, Context } from 'aws-lambda';
-import { handler } from 'lambda';
 import * as mailParser from 'mailparser';
-import * as mail from 'parse/mail';
-import * as storePdf from 'persist/pdf';
-import {
-  lambdaEvent,
-  mailBodyFixture,
-  mailFixture
-} from 'test/helpers/fixtures';
+import { handler } from '../../src/lambda';
+import * as mail from '../../src/parse/mail';
+import * as storePdf from '../../src/persist/pdf';
+import { lambdaEvent, mailBodyFixture, mailFixture } from '../helpers/fixtures';
 
 describe('Lambda', () => {
   let callback: Callback;
+  const context = {} as Context;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -37,7 +34,7 @@ describe('Lambda', () => {
         jest
           .spyOn(mail, 'getMailBlob')
           .mockImplementation(() => Promise.reject(error));
-        await handler(lambdaEvent, {} as Context, callback);
+        await handler(lambdaEvent, context, callback);
         expect(callback).toHaveBeenCalledWith(error, { disposition });
       });
     });
@@ -51,7 +48,7 @@ describe('Lambda', () => {
         jest
           .spyOn(mailParser, 'simpleParser')
           .mockImplementation(() => Promise.reject(error));
-        await handler(lambdaEvent, {} as Context, callback);
+        await handler(lambdaEvent, context, callback);
         expect(callback).toHaveBeenCalledWith(error, { disposition });
       });
     });
@@ -68,7 +65,7 @@ describe('Lambda', () => {
         jest
           .spyOn(storePdf, 'storePdf')
           .mockImplementation(() => Promise.reject(error));
-        await handler(lambdaEvent, {} as Context, callback);
+        await handler(lambdaEvent, context, callback);
         expect(callback).toHaveBeenCalledWith(error, { disposition });
       });
     });
@@ -85,7 +82,7 @@ describe('Lambda', () => {
       jest
         .spyOn(storePdf, 'storePdf')
         .mockImplementation(() => Promise.resolve());
-      await handler(lambdaEvent, {} as Context, callback);
+      await handler(lambdaEvent, context, callback);
       expect(callback).toHaveBeenCalledWith(null, null);
     });
   });

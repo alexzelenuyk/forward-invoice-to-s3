@@ -5,6 +5,10 @@ STACK_NAME ?= from-ses-to-s3
 SAM_TEMP_BUCKET_NAME ?= sam-deploy-packages
 SAM_DIST_DIR = .aws-sam
 SAM_DIST_TEMPLATE = $(SAM_DIST_DIR)/sam-template.yaml
+SAM_SRC_DIR = ./sam
+SAM_SRC_TEMPLATE = $(SAM_SRC_DIR)/template.yaml
+
+# SAM
 
 create-sam-bucket:
 	aws s3api create-bucket \
@@ -19,10 +23,10 @@ ensure-sam-dir:
 	mkdir -p $(SAM_DIST_DIR)
 
 build:
-	yarn --cwd src build
+	yarn build
 
 package: ensure-sam-dir
-	sam package --s3-bucket sam-deploy-packages --output-template-file $(SAM_DIST_TEMPLATE)
+	sam package --s3-bucket $(SAM_TEMP_BUCKET_NAME) --output-template-file $(SAM_DIST_TEMPLATE) --template-file $(SAM_SRC_TEMPLATE)
 
 deploy: ensuresetted-STORAGE_BUCKET_NAME package
 	sam deploy \
@@ -30,6 +34,8 @@ deploy: ensuresetted-STORAGE_BUCKET_NAME package
 	--stack-name $(STACK_NAME) \
 	--parameter-overrides StorageBucket=${STORAGE_BUCKET_NAME} \
 	--capabilities CAPABILITY_IAM
+
+# AWS setup
 
 activate-ruleset:
 	aws ses set-active-receipt-rule-set --rule-set-name \
@@ -39,13 +45,16 @@ activate-ruleset:
 verify-domain: ensuresetted-DOMAIN ensuresetted-AWS_REGION
 	aws ses verify-domain-identity --domain ${DOMAIN} | jq --raw-output '.VerificationToken'
 
+# Debug and development
 local-invoke:
-	sam local invoke -e src/test/sample/lambda_event_payload.json -n src/test/sample/env.json
+	sam local invoke -e test/integration/lambda_event_payload.json -n test/integration/env.json
 
 lambda-logs:
 	sam logs -n \
 	`aws cloudformation describe-stacks --stack-name ${STACK_NAME} |\
 	jq --raw-output '.Stacks[0].Outputs[] | select(.OutputKey | contains("LambdaFunction")) | .OutputValue | split(":")[6]'`
+
+# Helper
 
 ensuresetted-%:
 	@ if [ "${${*}}" = "" ]; then \

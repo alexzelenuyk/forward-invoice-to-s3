@@ -17,7 +17,7 @@ Resources:
     LambdaFunction:
         Type: AWS::Serverless::Function
         Properties:
-            CodeUri: src/.build
+            CodeUri: ../.build
             Handler: lambda.handler
             Runtime: nodejs8.10
             Environment:

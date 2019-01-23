@@ -1,10 +1,10 @@
 import { Callback, Context } from 'aws-lambda';
 
-import { SESEvent } from 'common/event';
 import { simpleParser } from 'mailparser';
-import { isPdfFile } from 'parse/attachments';
-import { getMailBlob } from 'parse/mail';
-import { storePdf } from 'persist/pdf';
+import { SESEvent } from './common/event';
+import { isPdfFile } from './parse/attachments';
+import { getMailBlob } from './parse/mail';
+import { storePdf } from './persist/pdf';
 
 export const handler = async (
   event: SESEvent,
@@ -14,7 +14,7 @@ export const handler = async (
   const messageId = event.Records[0].ses.mail.messageId;
 
   try {
-    const mailBlob = await getMailBlob(messageId)
+    const mailBlob = await getMailBlob(messageId);
     const mail = await simpleParser(mailBlob.Body.toString('utf-8'));
 
     if (mail.attachments) {

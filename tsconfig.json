@@ -12,7 +12,10 @@
 		"noImplicitUseStrict": false,
 		"noFallthroughCasesInSwitch": true,
 		"allowSyntheticDefaultImports": true,
-    "outDir": "./.build",
-    "baseUrl": "./"
-	}
+		"outDir": "./.build",
+		"baseUrl": "./src"
+	},
+	"exclude": [
+        "./test/**/*.ts"
+    ]
 }
