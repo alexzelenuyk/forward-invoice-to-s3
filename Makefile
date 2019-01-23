@@ -40,7 +40,7 @@ verify-domain: ensuresetted-DOMAIN ensuresetted-AWS_REGION
 	aws ses verify-domain-identity --domain ${DOMAIN} | jq --raw-output '.VerificationToken'
 
 local-invoke:
-	sam local invoke -e test/sample/test_email.json -n test/sample/env.json
+	sam local invoke -e src/test/sample/lambda_event_payload.json -n src/test/sample/env.json
 
 lambda-logs:
 	sam logs -n \

@@ -1,11 +1,9 @@
-import * as S3 from 'aws-sdk/clients/s3';
-
 import { Callback, Context } from 'aws-lambda';
 
-import { env } from 'common/env';
 import { SESEvent } from 'common/event';
 import { simpleParser } from 'mailparser';
 import { isPdfFile } from 'parse/attachments';
+import { getMailBlob } from 'parse/mail';
 import { storePdf } from 'persist/pdf';
 
 export const handler = async (
@@ -16,11 +14,7 @@ export const handler = async (
   const messageId = event.Records[0].ses.mail.messageId;
 
   try {
-    const object = {
-      Bucket: env().tempMailBucket,
-      Key: messageId
-    };
-    const mailBlob = await new S3().getObject(object).promise();
+    const mailBlob = await getMailBlob(messageId)
     const mail = await simpleParser(mailBlob.Body.toString('utf-8'));
 
     if (mail.attachments) {

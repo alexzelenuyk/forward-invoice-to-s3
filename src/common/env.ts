@@ -5,6 +5,7 @@ interface IVariables {
 
 function fromEnv(name: string): string {
   const variable = process.env[name];
+
   if (!variable) {
     throw new Error(`${name} is not set`);
   }
