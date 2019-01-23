@@ -1,4 +1,4 @@
-import * as AWS from "aws-sdk"
+import * as S3 from "aws-sdk/clients/s3"
 import { simpleParser } from "mailparser"
 
 import { SESEvent } from "common/event";
@@ -14,7 +14,7 @@ export const handler = async (event: SESEvent, context: Context, callback: Callb
             Bucket: env().tempMailBucket,
             Key: messageId
         }
-        const mailBlob = await new AWS.S3().getObject(object).promise()
+        const mailBlob = await new S3().getObject(object).promise()
         const mail = await simpleParser(mailBlob.Body.toString('utf-8'))
 
         if (mail.attachments) {
