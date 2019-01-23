@@ -1,4 +1,4 @@
 .aws-sam
-src/.build
-src/node_modules
-test/sample/env.json
+.build
+node_modules
+test/integration/env.json

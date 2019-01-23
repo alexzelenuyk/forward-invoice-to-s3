@@ -15,7 +15,7 @@
     "build": "tsc -p tsconfig.json",
     "postbuild": "yarn install --modules-folder ./.build/node_modules --prod",
     "lint": "tslint --project ./tsconfig.json --config ./tslint.json",
-    "lint:fix": "prettier --write ./**/*.ts"
+    "lint:fix": "prettier --write ./**/{**/**/*,**/*,*}.ts"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
@@ -33,7 +33,7 @@
     "typescript": "^3.2.4"
   },
   "jest": {
-    "rootDir": ".",
+    "rootDir": "./test",
     "transform": {
       ".(ts)": "ts-jest"
     },
@@ -42,10 +42,11 @@
       "ts",
       "js"
     ],
-    "testRegex": ".*.test.(ts)$",
+    "testRegex": ".*.test.ts$",
     "moduleDirectories": [
       "node_modules",
-      "."
+      "./src",
+      "./test"
     ]
   }
 }
