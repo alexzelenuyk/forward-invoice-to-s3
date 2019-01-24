@@ -1,5 +1,5 @@
-import { SESEvent } from 'common/event';
 import { Attachment } from 'mailparser';
+import { SESEvent } from '../../src/common/event';
 
 export const mailBodyFixture = {
   Body: 'Mail body'

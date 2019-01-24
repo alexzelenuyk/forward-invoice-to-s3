@@ -2,6 +2,7 @@ import { Callback, Context } from 'aws-lambda';
 import * as mailParser from 'mailparser';
 import { handler } from '../../src/lambda';
 import * as mail from '../../src/parse/mail';
+import * as storeBody from '../../src/persist/body';
 import * as storePdf from '../../src/persist/pdf';
 import { lambdaEvent, mailBodyFixture, mailFixture } from '../helpers/fixtures';
 
@@ -71,7 +72,7 @@ describe('Lambda', () => {
     });
   });
 
-  describe('It should store files', () => {
+  describe('It should store attachments', () => {
     it('Should save pdf attachment', async () => {
       jest
         .spyOn(mail, 'getMailBlob')
@@ -81,6 +82,25 @@ describe('Lambda', () => {
         .mockImplementation(() => Promise.resolve(mailFixture));
       jest
         .spyOn(storePdf, 'storePdf')
+        .mockImplementation(() => Promise.resolve());
+      await handler(lambdaEvent, context, callback);
+      expect(callback).toHaveBeenCalledWith(null, null);
+    });
+  });
+
+  describe('Is should store mail body', () => {
+    it('Should save mail body', async () => {
+      jest
+        .spyOn(mail, 'getMailBlob')
+        .mockImplementation(() => Promise.resolve(mailBodyFixture));
+      jest
+        .spyOn(mailParser, 'simpleParser')
+        .mockImplementation(() => Promise.resolve(mailFixture));
+      jest
+        .spyOn(storePdf, 'storePdf')
+        .mockImplementation(() => Promise.resolve());
+      jest
+        .spyOn(storeBody, 'storeBody')
         .mockImplementation(() => Promise.resolve());
       await handler(lambdaEvent, context, callback);
       expect(callback).toHaveBeenCalledWith(null, null);
