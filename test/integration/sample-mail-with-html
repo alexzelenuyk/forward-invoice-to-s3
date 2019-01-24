@@ -1,0 +1,83 @@
+Return-Path: <alexzelenuyk@gmail.com>
+Received: from mail-it1-f180.google.com (mail-it1-f180.google.com [209.85.166.180])
+ by inbound-smtp.eu-west-1.amazonaws.com with SMTP id 1m8vaocmpkaqe46cmia2it3vcu3d48j1dpuepkg1
+ for i@i.zeleniuk.com;
+ Thu, 24 Jan 2019 11:04:13 +0000 (UTC)
+Received-SPF: pass (spfCheck: domain of _spf.google.com designates 209.85.166.180 as permitted sender) client-ip=209.85.166.180; envelope-from=alexzelenuyk@gmail.com; helo=mail-it1-f180.google.com;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of _spf.google.com designates 209.85.166.180 as permitted sender) client-ip=209.85.166.180; envelope-from=alexzelenuyk@gmail.com; helo=mail-it1-f180.google.com;
+ dkim=pass header.i=@gmail.com;
+ dmarc=pass header.from=gmail.com;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFGczlxeDNKMXozU2NveSs4d0dJeGFqVzZaSU5nTFFKdm9rakVoTm5jZHRMbTRpelQ5RWE5NUo2aW9oVkhMOVF0T2JwMFN4UHh4S21UU1h3ay9nNlk3Zkp1NjZRTHVLYnZrYlF2bEtpVjJzeUVtcFNyZ2ZiNGE2cmNaaGtjZXVLK1ovcjd0TzRsWlFKTE9kcmhjbm9KaUxONUlsNUpYMjlDTnlGRDlJTCtLT1hLMmtTQjk2RXF5OGZQcUczWnVoeEJvdExsVE1sTTlTR2FOejAyRG1RWjZiMXQwM3IySm1FREpnc1JkU3gyY1h5UmNDRUhrQ2VxTTExUVF5SzIxMnVBa1ZodW9aZmtoQnc4WlIybGV3ZERRcGhQczdhcGJvZVNiMC9oZXhLdnFCK3MxTDdiY0VsOEo1eVlpaDZhTU5Gd2M9
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=pLg/VVsMc/t1rQoUvfFBFZ7ClrP3T7ySvmjly48sXpt3saSLqTohA8pE4g8UByG7VsPqIjrYGfrmPCexYDOkM9azcPSMBJlgBbZrxGLpsgJcBZ9q33exiDK353SB+aOL4MJqKPkGGKmhslcT8oBR95WbCHSkx/G7RAEDtYsutng=; c=relaxed/simple; s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1548327854; v=1; bh=NRlN1FpCgsXv6phiHtkIDdrLiT7l95CX5sdlP8Cv2L4=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+Received: by mail-it1-f180.google.com with SMTP id i145so4277041ita.4
+        for <i@i.zeleniuk.com>; Thu, 24 Jan 2019 03:04:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=EyL5pqSa/BoMnKHNUyJRh+aA7XWQC1omIvNUSfnmdP8=;
+        b=LMB/3mu0tDMav/cR00FjxhMets2rxik5qXk14z1hHE4rdZAngyVRygJPtxmDW6r+6y
+         WOCWL6a9EntwZap8C7DTabFWN3JyHT85/C+1HujrIFMRvZEBT+pnhNc+PlMccW+dWYGL
+         2EZCilN096oiJ47Popit7zUBAezaPOu4ROxd4FHQGoN/WxxlIbi9QhnK9EcZWvRjkCDQ
+         gG4gfzlt7cMW7XlXpGmBiZ3qQAfAf7ipZw0KhyEuOA3cMAGzwLcRslPlWsLnAFVpMylR
+         tReQIByKE+7cZclM+qNJjd1ADf0NUFnANcmNrxDTOlhqfNpXEPk2EtxBOnPr/13Oeurm
+         h44A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=EyL5pqSa/BoMnKHNUyJRh+aA7XWQC1omIvNUSfnmdP8=;
+        b=oLzGS3y2edACikscacO2lNXGQyaqqDyeDdfFcOa5tdtx2iVzDjAfQNgg04UjuEbeOJ
+         vWJt81rFCcaxs16u/AmTNj2tt7iAEQo894o+KGxXtdAefn6KdfEXmmnd0dwtOUQ/aaCb
+         FikYaT1qOhQnVka1FwJSFoxwLH5rT5vBg0ahuppZsWwjC71T2PLPege+dY3bS9yhJiXj
+         LrvmsRJC7i1NGvEQ1qgGH0gGQObJDc0k6EAlsTFk+QeMADVX9Ux8b1iEyHcG7QP0SRZE
+         XHWGq20QXc6oVOhcdpP5qhSaOgn+e4g0A9ETcL62T6ZuEa00+itHvncLS5XHaZA82UZA
+         iO6Q==
+X-Gm-Message-State: AJcUukeQBVtbGodlcamx/4mcHG8e+f638fYGbd1YtvPmGaqagq0yiOUN
+	Q4qog6wk3V//s6NHDO0T+1WxzlEQ5evNGDCrJvVsfA==
+X-Google-Smtp-Source: ALg8bN7K9qSoT7h2TePc2d1e3IrPIHiwBsJoNelCmRVgAd1g+L6dt3h0srpkFsdze2gk8VyVo1DEC8lWf9rqtE6zGw8=
+X-Received: by 2002:a24:d587:: with SMTP id a129mr1011501itg.111.1548327852180;
+ Thu, 24 Jan 2019 03:04:12 -0800 (PST)
+MIME-Version: 1.0
+Reply-To: oleksii@zeleniuk.com
+From: Oleksii Zeleniuk <alexzelenuyk@gmail.com>
+Date: Thu, 24 Jan 2019 12:04:01 +0100
+Message-ID: <CA+GAm3NV=gTtLecfi7iMWJjhfy58OO_FeriC9zO1QyXtsd3UvA@mail.gmail.com>
+Subject: Screenshot
+To: i@i.zeleniuk.com
+Content-Type: multipart/alternative; boundary="000000000000a009d70580322bdb"
+
+--000000000000a009d70580322bdb
+Content-Type: text/plain; charset="UTF-8"
+
+Some invoice
+With *bold, *link <http://google.com> and red
+
+This is test quote
+
+
+
+   - item 1
+   - item 2
+
+
+-- 
+Best regards,
+Oleksii Zeleniuk
+mob: +49 (157) 83112520
+
+--000000000000a009d70580322bdb
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Some invoice<div>With <b>bold, </b><a href=3D"http://googl=
+e.com">link</a>=C2=A0and <span style=3D"background-color:rgb(255,0,0)">red<=
+/span><br><div><br></div><div><blockquote class=3D"gmail_quote" style=3D"ma=
+rgin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:=
+1ex">This is test quote</blockquote><div><br></div><div><ul><li>item 1</li>=
+<li>item 2=C2=A0<br></li></ul></div><div><br></div>-- <br><div dir=3D"ltr" =
+class=3D"gmail_signature" data-smartmail=3D"gmail_signature"><div dir=3D"lt=
+r"><div><div dir=3D"ltr">Best regards, <br>Oleksii Zeleniuk<div>mob: +49 (1=
+57) 83112520</div></div></div></div></div></div></div></div>
+
+--000000000000a009d70580322bdb--

@@ -46,13 +46,31 @@ verify-domain: ensuresetted-DOMAIN ensuresetted-AWS_REGION
 	aws ses verify-domain-identity --domain ${DOMAIN} | jq --raw-output '.VerificationToken'
 
 # Debug and development
-local-invoke:
-	sam local invoke -e test/integration/lambda_event_payload.json -n test/integration/env.json
+upload-mail-with-screenshot:
+	aws s3api put-object --bucket sam-deploy-packages --key test_mail --body test/integration/sample-mail-with-html
+
+upload-mail-with-pdf:
+	aws s3api put-object --bucket sam-deploy-packages --key test_mail --body test/integration/sample-mail-with-pdf
+
+local-invoke-with-pdf: build upload-mail-with-pdf
+	sam local invoke -t ./sam/template.yaml -e test/integration/lambda_event_payload.json -n test/integration/env.json
+
+local-invoke-with-screenshot: build upload-mail-with-screenshot
+	sam local invoke -t ./sam/template.yaml -e test/integration/lambda_event_payload.json -n test/integration/env.json
 
 lambda-logs:
 	sam logs -n \
 	`aws cloudformation describe-stacks --stack-name ${STACK_NAME} |\
 	jq --raw-output '.Stacks[0].Outputs[] | select(.OutputKey | contains("LambdaFunction")) | .OutputValue | split(":")[6]'`
+
+# Tests
+
+integration-test:
+	! make local-invoke-with-screenshot | grep "errorMessage"
+	! make local-invoke-with-pdf | grep "errorMessage"
+
+unit-test:
+	yarn test
 
 # Helper
 
@@ -62,4 +80,4 @@ ensuresetted-%:
 	    exit 1; \
 	fi
 
-.PHONY: lambda-logs deploy package activate-ruleset build sam-bucket verify-domain
+.PHONY: lambda-logs deploy package activate-ruleset build sam-bucket verify-domain local-invoke-with-pdf local-invoke-with-screenshot integration-test unit-test

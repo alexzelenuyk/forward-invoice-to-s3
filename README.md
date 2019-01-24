@@ -9,10 +9,11 @@ Wheneve you receive email with invoice, you can just forward it `invoice@invoice
 
 Folder structure:
 ```
-2009/1/Internet.pdf
-       Mobile.pdf
-     2/Internet.pdf
-       Laptop.pdf
+2009/Jan/i23/Internet.pdf
+             Body.txt
+         456/Mobile.pdf
+             Body.txt
+     Feb/789/Body.txt
 ```
 
 ## Requirements
