@@ -1,5 +1,20 @@
 SAM with Cloudformation template to intercept emails using SES, extract invoices using Lambda and store them categorised to S3.
 
+## Use case
+There was a need of storing documents in durable inexpensive store with automatic categoriasation by date.
+For example, you need to store all invoices for the last 10 years.
+With current tool that's became easier.
+
+Wheneve you receive email with invoice, you can just forward it `invoice@invoice.example.com` and attached invoice will be store in S3.
+
+Folder structure:
+```
+2009/1/Internet.pdf
+       Mobile.pdf
+     2/Internet.pdf
+       Laptop.pdf
+```
+
 ## Requirements
 * [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
 * [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
@@ -8,23 +23,29 @@ SAM with Cloudformation template to intercept emails using SES, extract invoices
 
 ## Setup
 
+### Download
+Clone or fork the repo.
+```bash
+> git clone git@github.com:alexzelenuyk/forward-invoices-to-s3.git
+```
+
 ### Setup SAM S3 bucket
 We need to create s3 bucket for SAM to store resourcers.
-We also configure Lifecycle policy to remove delete files after 1day.
+We also configure Lifecycle policy to remove old files after 1day.
 
 ```bash
 > SAM_TEMP_BUCKET_NAME=<YOU_UNIQUE_SAM_BUCKET_NAME> make sam-bucket
 ```
 
 ### Build source
-We need transpile *.ts file to JS artifacts.
+We need to transpile *.ts file to JS artifacts.
 
 ```bash
 > make build
 ```
 
 ### Credentials
-Set your AWS credentials.
+Set your AWS credentials in env variables.
 You should have all variables from below:
 ```bash
 > env | grep AWS
