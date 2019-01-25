@@ -133,7 +133,7 @@ Metadata:
     Name: forward-invoice-to-s3
     Description: Application that intercepts emails (using SES), find .pdf attachemnts and store them categorised in S3
     Author: Oleksii Zeleniuk
-    SpdxLicenseId: MIT License
+    SpdxLicenseId: MIT
     LicenseUrl: ../LICENSE
     ReadmeUrl: ../README.md
     Labels: ['SES', 'S3', 'Lambda']

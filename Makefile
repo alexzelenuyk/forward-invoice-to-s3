@@ -7,6 +7,7 @@ SAM_DIST_DIR = .aws-sam
 SAM_DIST_TEMPLATE = $(SAM_DIST_DIR)/sam-template.yaml
 SAM_SRC_DIR = ./sam
 SAM_SRC_TEMPLATE = $(SAM_SRC_DIR)/template.yaml
+SAM_PUBLISH_OUTPUT = ${SAM_DIST_DIR}/publish.yaml
 
 # SAM
 
@@ -83,8 +84,12 @@ cfn-lint:
 
 lint-all: code-lint cfn-lint
 
-publish: ensuresetted-SAM_PUBLISH_BUCKET
-	sam package --template-file sam/template.yaml --s3-bucket ${SAM_PUBLISH_BUCKET} --region ${AWS_REGION}
+package: ensuresetted-SAM_PUBLISH_BUCKET
+	sam package --template-file ./sam/template.yaml --s3-bucket ${SAM_PUBLISH_BUCKET} --region ${AWS_REGION}  --output-template-file ${SAM_PUBLISH_OUTPUT}
+
+publish: package
+	#sam publish -t ${SAM_PUBLISH_OUTPUT} --region ${AWS_REGION}
+	echo "Disabled due to https://github.com/awslabs/aws-sam-cli/issues/955, unsupported resources AWS::SES::ReceiptRule and AWS::SES::ReceiptRuleSet"
 
 # Helper
 
