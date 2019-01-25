@@ -83,8 +83,8 @@ cfn-lint:
 
 lint-all: code-lint cfn-lint
 
-publish:
-	echo "Do nothing"
+publish: ensuresetted-SAM_PUBLISH_BUCKET
+	sam package --template-file sam/template.yaml --s3-bucket ${SAM_PUBLISH_BUCKET} --region ${AWS_REGION}
 
 # Helper
 
