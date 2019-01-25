@@ -128,3 +128,15 @@ Outputs:
   RulesetsName:
     Description: 'Name of rulesets'
     Value: 'InvoicesToS3'
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: forward-invoice-to-s3
+    Description: Application that intercepts emails (using SES), find .pdf attachemnts and store them categorised in S3
+    Author: Oleksii Zeleniuk
+    SpdxLicenseId: MIT License
+    LicenseUrl: ../LICENSE
+    ReadmeUrl: ../README.md
+    Labels: ['SES', 'S3', 'Lambda']
+    HomePageUrl: https://github.com/alexzelenuyk/forward-invoice-to-s3
+    SemanticVersion: 0.0.1
+    SourceCodeUrl: https://github.com/alexzelenuyk/forward-invoice-to-s3
