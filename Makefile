@@ -63,7 +63,7 @@ lambda-logs:
 	`aws cloudformation describe-stacks --stack-name ${STACK_NAME} |\
 	jq --raw-output '.Stacks[0].Outputs[] | select(.OutputKey | contains("LambdaFunction")) | .OutputValue | split(":")[6]'`
 
-# Tests
+# Tests & linting
 
 integration-test:
 	! make local-invoke-with-screenshot | grep "errorMessage"
@@ -71,6 +71,14 @@ integration-test:
 
 unit-test:
 	yarn test
+
+code-lint:
+	yarn lint
+
+cfn-lint:
+	cfn-lint ./sam/template.yaml
+
+lint-all: code-lint cfn-lint
 
 # Helper
 

@@ -1,133 +1,130 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-    Stack intercepts emails, invoke lambda to extract invoices and store them in s3 with categorisation
+  Stack intercepts emails, invoke lambda to extract invoices and store them in s3 with categorisation
 
 Globals:
-    Function:
-        Timeout: 30
+  Function:
+    Timeout: 30
 
 Parameters:
-    StorageBucket:
-        Type: String
-        Description: Prefix for S3 bucket where all documents will be stored
+  StorageBucket:
+    Type: String
+    Description: Prefix for S3 bucket where all documents will be stored
 
 Resources:
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../.build
+      Handler: lambda.handler
+      Runtime: nodejs8.10
+      Environment:
+        Variables:
+          TEMP_MAIL_BUCKET:
+            !Select [0, !Split ['.', !GetAtt S3TempBucketForEmails.DomainName]]
+          DESTINATION_BUCKET: !Ref StorageBucket
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 's3:GetObject'
+                - 's3:PutObject'
+              Resource:
+                - !Join ['', [!GetAtt S3TempBucketForEmails.Arn, '/*']]
+                - !Join ['', [!GetAtt S3StorageBucket.Arn, '/*']]
+            - Effect: Allow
+              Action: ses:SendBounce
+              Resource: '*'
+            - Effect: Allow
+              Action: logs:*
+              Resource: 'arn:aws:logs:*:*:*'
+    DependsOn:
+      - S3StorageBucket
 
-    LambdaFunction:
-        Type: AWS::Serverless::Function
-        Properties:
-            CodeUri: ../.build
-            Handler: lambda.handler
-            Runtime: nodejs8.10
-            Environment:
-                Variables:
-                    TEMP_MAIL_BUCKET: !Select [0, !Split [".", !GetAtt S3TempBucketForEmails.DomainName]]
-                    DESTINATION_BUCKET: !Ref StorageBucket
-            Policies:
-                - Version: '2012-10-17'
-                  Statement:
-                    - Effect: Allow
-                      Action:
-                        - "s3:GetObject"
-                        - "s3:PutObject"
-                      Resource:
-                        - !Join ["", [!GetAtt S3TempBucketForEmails.Arn, "/*"]]
-                        - !Join ["", [!GetAtt S3StorageBucket.Arn, "/*"]]
-                    - Effect: Allow
-                      Action: ses:SendBounce
-                      Resource: "*"
-                    - Effect: Allow
-                      Action: logs:*
-                      Resource: "arn:aws:logs:*:*:*"
+  S3TempBucketForEmails:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      AccessControl: BucketOwnerFullControl
+      LifecycleConfiguration:
+        Rules:
+          - Id: 'DeleteFile'
+            ExpirationInDays: 1
+            Status: Enabled
 
-        DependsOn:
-            - S3TempBucketForEmails
-            - S3StorageBucket
+  S3StorageBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref StorageBucket
 
-    S3TempBucketForEmails:
-        Type : AWS::S3::Bucket
-        DeletionPolicy: Delete
-        Properties:
-            AccessControl: BucketOwnerFullControl
-            LifecycleConfiguration:
-                Rules:
-                - Id: "DeleteFile"
-                  ExpirationInDays: 1
-                  Status: Enabled
+  S3TempBucketForEmailsPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        !Select [0, !Split ['.', !GetAtt S3TempBucketForEmails.DomainName]]
+      PolicyDocument:
+        Statement:
+          - Sid: 'AllowSESPuts'
+            Principal:
+              Service: 'ses.amazonaws.com'
+            Action: 's3:PutObject'
+            Effect: 'Allow'
+            Resource: !Join ['', [!GetAtt S3TempBucketForEmails.Arn, '/*']]
+    DependsOn:
+      - LambdaSesPermissions
 
-    S3StorageBucket:
-        Type : AWS::S3::Bucket
-        Properties:
-            BucketName: !Ref StorageBucket
+  LambdaSesPermissions:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      Principal: ses.amazonaws.com
+      FunctionName: !GetAtt LambdaFunction.Arn
 
-    S3TempBucketForEmailsPolicy:
-        Type: AWS::S3::BucketPolicy
-        Properties:
-            Bucket: !Select [0, !Split [".", !GetAtt S3TempBucketForEmails.DomainName]]
-            PolicyDocument:
-                Statement:
-                - Sid: "AllowSESPuts"
-                  Principal:
-                    Service: "ses.amazonaws.com"
-                  Action: "s3:PutObject"
-                  Effect: "Allow"
-                  Resource: !Join ["", [!GetAtt S3TempBucketForEmails.Arn, "/*"]]
-        DependsOn:
-            - S3TempBucketForEmails
-            - LambdaSesPermissions
+  RuleSet:
+    Type: AWS::SES::ReceiptRuleSet
+    Properties:
+      RuleSetName: InvoicesToS3
 
-    LambdaSesPermissions:
-        Type : AWS::Lambda::Permission
-        Properties:
-            Action: lambda:InvokeFunction
-            Principal: ses.amazonaws.com
-            FunctionName: !GetAtt LambdaFunction.Arn
-        DependsOn: LambdaFunction
+  SESRulesToStoreMail:
+    Type: AWS::SES::ReceiptRule
+    Properties:
+      RuleSetName: !Ref RuleSet
+      Rule:
+        Enabled: True
+        Actions:
+          - S3Action:
+              BucketName:
+                !Select [
+                  0,
+                  !Split ['.', !GetAtt S3TempBucketForEmails.DomainName],
+                ]
+    DependsOn:
+      - LambdaFunction
+      - LambdaSesPermissions
 
-    RuleSet:
-        Type: AWS::SES::ReceiptRuleSet
-        Properties:
-            RuleSetName: InvoicesToS3
-
-    SESRulesToStoreMail:
-        Type: AWS::SES::ReceiptRule
-        Properties:
-            RuleSetName: !Ref RuleSet
-            Rule:
-              Enabled: True
-              Actions:
-                - S3Action:
-                    BucketName: !Select [0, !Split [".", !GetAtt S3TempBucketForEmails.DomainName]]
-        DependsOn:
-          - LambdaFunction
-          - S3TempBucketForEmails
-          - LambdaSesPermissions
-          - RuleSet
-
-    SESRulesToInvokeLambda:
-        Type: AWS::SES::ReceiptRule
-        Properties:
-            RuleSetName: !Ref RuleSet
-            After: !Ref SESRulesToStoreMail
-            Rule:
-              Enabled: True
-              Actions:
-                - LambdaAction:
-                    FunctionArn: !GetAtt LambdaFunction.Arn
-        DependsOn:
-          - LambdaFunction
-          - S3TempBucketForEmails
-          - LambdaSesPermissions
-          - RuleSet
+  SESRulesToInvokeLambda:
+    Type: AWS::SES::ReceiptRule
+    Properties:
+      RuleSetName: !Ref RuleSet
+      After: !Ref SESRulesToStoreMail
+      Rule:
+        Enabled: True
+        Actions:
+          - LambdaAction:
+              FunctionArn: !GetAtt LambdaFunction.Arn
+    DependsOn:
+      - S3TempBucketForEmails
+      - LambdaSesPermissions
 
 Outputs:
-    LambdaFunction:
-        Description: "Lambda handler ARN"
-        Value: !GetAtt LambdaFunction.Arn
-    StorageBucket:
-        Description: "Storage bucket name"
-        Value: !GetAtt S3StorageBucket.DomainName
-    RulesetsName:
-        Description: "Name of rulesets"
-        Value: "InvoicesToS3"
+  LambdaFunction:
+    Description: 'Lambda handler ARN'
+    Value: !GetAtt LambdaFunction.Arn
+  StorageBucket:
+    Description: 'Storage bucket name'
+    Value: !GetAtt S3StorageBucket.DomainName
+  RulesetsName:
+    Description: 'Name of rulesets'
+    Value: 'InvoicesToS3'
