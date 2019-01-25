@@ -79,7 +79,7 @@ code-lint:
 	yarn lint
 
 cfn-lint:
-	cfn-lint ./sam/template.yaml
+	yarn lint:cfn
 
 lint-all: code-lint cfn-lint
 
