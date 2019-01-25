@@ -22,6 +22,9 @@ Folder structure:
 * [YARN](https://yarnpkg.com/lang/en/docs/install/#mac-stable)
 * [jq](https://stedolan.github.io/jq/)
 
+For development:
+* [Cfn lint](https://github.com/awslabs/aws-cfn-lint-visual-studio-code)
+
 ## Setup
 
 ### Download
