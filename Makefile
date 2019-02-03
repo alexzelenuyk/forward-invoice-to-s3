@@ -84,10 +84,10 @@ cfn-lint:
 
 lint-all: code-lint cfn-lint
 
-package: ensuresetted-SAM_PUBLISH_BUCKET
+package-for-upload: ensuresetted-SAM_PUBLISH_BUCKET
 	sam package --template-file ./sam/template.yaml --s3-bucket ${SAM_PUBLISH_BUCKET} --region ${AWS_REGION}  --output-template-file ${SAM_PUBLISH_OUTPUT}
 
-publish: package
+publish: package-for-upload
 	#sam publish -t ${SAM_PUBLISH_OUTPUT} --region ${AWS_REGION}
 	echo "Disabled due to https://github.com/awslabs/aws-sam-cli/issues/955, unsupported resources AWS::SES::ReceiptRule and AWS::SES::ReceiptRuleSet"
 
