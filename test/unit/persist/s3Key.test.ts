@@ -17,7 +17,7 @@ describe('Persist functions', () => {
         const timestampInFuture = 1273017600000;
         Date.now = jest.fn().mockImplementation(() => timestampInFuture);
 
-        expect(getS3KeyPrefix()).toEqual('2010/May');
+        expect(getS3KeyPrefix()).toEqual('2010/May/5');
       });
     });
   });
@@ -25,7 +25,7 @@ describe('Persist functions', () => {
   describe('getS3Key()', () => {
     describe('getS3Key()', () => {
       it('Should build correct file key', () => {
-        expect(getS3Key('id', 'file')).toEqual('2010/May/id/file');
+        expect(getS3Key('id', 'file')).toEqual('2010/May/5/id/file');
       });
     });
   });
