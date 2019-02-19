@@ -99,4 +99,4 @@ ensuresetted-%:
 	    exit 1; \
 	fi
 
-.PHONY: lambda-logs deploy package activate-ruleset build sam-bucket verify-domain local-invoke-with-pdf local-invoke-with-screenshot integration-test unit-test
+.PHONY: publish lambda-logs deploy package activate-ruleset build sam-bucket verify-domain local-invoke-with-pdf local-invoke-with-screenshot integration-test unit-test
