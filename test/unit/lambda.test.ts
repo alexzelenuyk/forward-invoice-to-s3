@@ -1,10 +1,14 @@
-import { Callback, Context } from 'aws-lambda';
-import * as mailParser from 'mailparser';
-import { handler } from '../../src/lambda';
+import * as AWS from 'aws-sdk';
 import * as mail from '../../src/parse/mail';
+import * as mailParser from 'mailparser';
 import * as storeBody from '../../src/persist/body';
 import * as storePdf from '../../src/persist/pdf';
+
+import { Callback, Context } from 'aws-lambda';
 import { lambdaEvent, mailBodyFixture, mailFixture } from '../helpers/fixtures';
+
+import { PromiseResult } from 'aws-sdk/lib/request';
+import { handler } from '../../src/lambda';
 
 describe('Lambda', () => {
   let callback: Callback;
@@ -45,7 +49,14 @@ describe('Lambda', () => {
         error = 'Parse error';
         jest
           .spyOn(mail, 'getMailBlob')
-          .mockImplementation(() => Promise.resolve(mailBodyFixture));
+          .mockImplementation(() =>
+            Promise.resolve(
+              mailBodyFixture as PromiseResult<
+                AWS.S3.GetObjectOutput,
+                AWS.AWSError
+              >
+            )
+          );
         jest
           .spyOn(mailParser, 'simpleParser')
           .mockImplementation(() => Promise.reject(error));
@@ -59,10 +70,19 @@ describe('Lambda', () => {
         error = 'Failed to save';
         jest
           .spyOn(mail, 'getMailBlob')
-          .mockImplementation(() => Promise.resolve(mailBodyFixture));
+          .mockImplementation(() =>
+            Promise.resolve(
+              mailBodyFixture as PromiseResult<
+                AWS.S3.GetObjectOutput,
+                AWS.AWSError
+              >
+            )
+          );
         jest
           .spyOn(mailParser, 'simpleParser')
-          .mockImplementation(() => Promise.resolve(mailFixture));
+          .mockImplementation(() =>
+            Promise.resolve(mailFixture as mailParser.ParsedMail)
+          );
         jest
           .spyOn(storePdf, 'storePdf')
           .mockImplementation(() => Promise.reject(error));
@@ -76,10 +96,19 @@ describe('Lambda', () => {
     it('Should save pdf attachmentand mail body', async () => {
       jest
         .spyOn(mail, 'getMailBlob')
-        .mockImplementation(() => Promise.resolve(mailBodyFixture));
+        .mockImplementation(() =>
+          Promise.resolve(
+            mailBodyFixture as PromiseResult<
+              AWS.S3.GetObjectOutput,
+              AWS.AWSError
+            >
+          )
+        );
       jest
         .spyOn(mailParser, 'simpleParser')
-        .mockImplementation(() => Promise.resolve(mailFixture));
+        .mockImplementation(() =>
+          Promise.resolve(mailFixture as mailParser.ParsedMail)
+        );
       jest
         .spyOn(storePdf, 'storePdf')
         .mockImplementation(() => Promise.resolve());

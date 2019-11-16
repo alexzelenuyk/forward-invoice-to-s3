@@ -18,7 +18,7 @@ Resources:
     Properties:
       CodeUri: ../.build
       Handler: lambda.handler
-      Runtime: nodejs8.10
+      Runtime: nodejs10.x
       Environment:
         Variables:
           TEMP_MAIL_BUCKET:
