@@ -11,7 +11,6 @@
     "mailparser": "^2.4.3"
   },
   "scripts": {
-    "install": "yarn",
     "test": "jest",
     "build": "tsc -p tsconfig.json",
     "postbuild": "yarn install --modules-folder ./.build/node_modules --prod",
@@ -22,7 +21,7 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
     "@types/aws-sdk": "^2.7.0",
-    "@types/jest": "^23.3.13",
+    "@types/jest": "^24.0.23",
     "@types/mailparser": "^2.0.2",
     "@types/node": "^10.12.18",
     "cfn-lint": "^1.9.4",
