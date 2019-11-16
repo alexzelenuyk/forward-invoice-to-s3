@@ -79,7 +79,7 @@
   dependencies:
     jest-diff "^24.3.0"
 
-"@types/mailparser@^2.0.2":
+"@types/mailparser@^2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@types/mailparser/-/mailparser-2.4.0.tgz#685b3c3c23c93000695c06f276e430860ed3b96c"
   integrity sha512-0djQXc+j21C/gnj/l2TDKG4gzhcRcIGxmT9EfHO+j8Qdi2MUFoDUWfa0oLlvC++QyBFS1+k9ZZiGwZNpHNfYmg==
@@ -2655,7 +2655,7 @@ loose-envify@^1.0.0:
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
-mailparser@^2.4.3:
+mailparser@^2.7.6:
   version "2.7.6"
   resolved "https://registry.yarnpkg.com/mailparser/-/mailparser-2.7.6.tgz#308db2d3d52289d0927e664a064a58e7e1be274b"
   integrity sha512-TzxHIZiQW/BVsvqmQEjFFMqOJQg5nn9coX67j2YMN9rOVo8xK7rhAS3Y7RGhGEXNwJE3OLI+j4IxyOe+r2puVQ==

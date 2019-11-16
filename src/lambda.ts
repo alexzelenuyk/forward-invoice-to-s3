@@ -1,10 +1,10 @@
+import { Attachment, ParsedMail, simpleParser } from 'mailparser';
 import { Callback, Context } from 'aws-lambda';
 
-import { Attachment, ParsedMail, simpleParser } from 'mailparser';
-import { storeBody } from 'persist/body';
 import { SESEvent } from './common/event';
-import { isPdfFile } from './parse/attachments';
 import { getMailBlob } from './parse/mail';
+import { isPdfFile } from './parse/attachments';
+import { storeBody } from './persist/body';
 import { storePdf } from './persist/pdf';
 
 function findPdf(mail: ParsedMail): Attachment[] {
