@@ -51,6 +51,7 @@ We also configure Lifecycle policy to remove old files after 1day.
 We need to transpile \*.ts file to JS artifacts.
 
 ```bash
+> make install
 > make build
 ```
 

@@ -11,6 +11,7 @@
     "mailparser": "^2.4.3"
   },
   "scripts": {
+    "install": "yarn",
     "test": "jest",
     "build": "tsc -p tsconfig.json",
     "postbuild": "yarn install --modules-folder ./.build/node_modules --prod",
