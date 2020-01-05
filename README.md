@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/alexzelenuyk/forward-invoice-to-s3.svg?style=svg)](https://circleci.com/gh/alexzelenuyk/forward-invoice-to-s3)
+[![Actions Status](https://github.com/alexzelenuyk/forward-invoice-to-s3/workflows/lambda/badge.svg)](https://github.com/alexzelenuyk/forward-invoice-to-s3/actions)
 
 SAM with Cloudformation template to intercept emails using SES, extract invoices using Lambda and store them categorised to S3.
 
