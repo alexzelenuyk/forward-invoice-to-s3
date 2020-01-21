@@ -123,3 +123,4 @@ In reality it's done in a few minutes. You can check the status in AWS Console >
 ### Enjoy
 
 That should be it. You can test it by sending email to `any-recepient@invoice.example.com`
+
