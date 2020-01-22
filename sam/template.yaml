@@ -11,6 +11,9 @@ Parameters:
   StorageBucket:
     Type: String
     Description: Prefix for S3 bucket where all documents will be stored
+  RecipientEmail:
+    Type: String
+    Description: Recepient email
 
 Resources:
   LambdaFunction:
@@ -85,7 +88,7 @@ Resources:
   RuleSet:
     Type: AWS::SES::ReceiptRuleSet
     Properties:
-      RuleSetName: InvoicesToS3
+      RuleSetName: Default
 
   SESRulesToStoreMail:
     Type: AWS::SES::ReceiptRule
@@ -93,6 +96,7 @@ Resources:
       RuleSetName: !Ref RuleSet
       Rule:
         Enabled: True
+        Recipients: [!Ref RecipientEmail]
         Actions:
           - S3Action:
               BucketName:
@@ -108,6 +112,7 @@ Resources:
     Type: AWS::SES::ReceiptRule
     Properties:
       RuleSetName: !Ref RuleSet
+      Recipients: [!Ref RecipientEmail]
       After: !Ref SESRulesToStoreMail
       Rule:
         Enabled: True
@@ -127,7 +132,7 @@ Outputs:
     Value: !GetAtt S3StorageBucket.DomainName
   RulesetsName:
     Description: 'Name of rulesets'
-    Value: 'InvoicesToS3'
+    Value: 'Default'
 Metadata:
   AWS::ServerlessRepo::Application:
     Name: forward-invoice-to-s3

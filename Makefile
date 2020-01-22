@@ -29,11 +29,12 @@ build:
 package: ensure-sam-dir
 	sam package --s3-bucket $(SAM_TEMP_BUCKET_NAME) --output-template-file $(SAM_DIST_TEMPLATE) --template-file $(SAM_SRC_TEMPLATE)
 
-deploy: ensuresetted-STORAGE_BUCKET_NAME package
+deploy: ensuresetted-STORAGE_BUCKET_NAME ensuresetted-RECIPIENT_EMAIL package
 	sam deploy \
 	--template-file $(SAM_DIST_TEMPLATE) \
 	--stack-name $(STACK_NAME) \
 	--parameter-overrides StorageBucket=${STORAGE_BUCKET_NAME} \
+	--parameter-overrides RecipientEmail=${RECIPIENT_EMAIL} \
 	--capabilities CAPABILITY_IAM
 
 # AWS setup
