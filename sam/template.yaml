@@ -112,10 +112,10 @@ Resources:
     Type: AWS::SES::ReceiptRule
     Properties:
       RuleSetName: !Ref RuleSet
-      Recipients: [!Ref RecipientEmail]
       After: !Ref SESRulesToStoreMail
       Rule:
         Enabled: True
+        Recipients: [!Ref RecipientEmail]
         Actions:
           - LambdaAction:
               FunctionArn: !GetAtt LambdaFunction.Arn
