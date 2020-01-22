@@ -85,7 +85,7 @@ Resources:
   RuleSet:
     Type: AWS::SES::ReceiptRuleSet
     Properties:
-      RuleSetName: InvoicesToS3
+      RuleSetName: CVToS3
 
   SESRulesToStoreMail:
     Type: AWS::SES::ReceiptRule
@@ -127,7 +127,7 @@ Outputs:
     Value: !GetAtt S3StorageBucket.DomainName
   RulesetsName:
     Description: 'Name of rulesets'
-    Value: 'InvoicesToS3'
+    Value: 'CVToS3'
 Metadata:
   AWS::ServerlessRepo::Application:
     Name: forward-invoice-to-s3
