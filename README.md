@@ -72,7 +72,7 @@ Be aware, that AWS SES at the moment is available only in `us-east-1`, `us-west-
 ### Deploy stack
 
 ```bash
-> STORAGE_BUCKET_NAME=bucket-name make deploy
+> STORAGE_BUCKET_NAME=bucket-name RECIPIENT_EMAIL=mail@invoice.example.com make deploy
 ```
 
 We have following variables:
@@ -80,6 +80,7 @@ We have following variables:
 | Env variable        | Description                                                              | Required | Default        |
 | ------------------- | ------------------------------------------------------------------------ | -------- | -------------- |
 | STORAGE_BUCKET_NAME | Bucket name where we will store resulted documents, must unique globaluy | true     |                |
+| RECIPIENT_EMAIL | Recipient email address | true     |                |
 | STACK_NAME          | Cloudformation stack name                                                | false    | from-ses-to-s3 |
 
 ### Activate SES rulesets
